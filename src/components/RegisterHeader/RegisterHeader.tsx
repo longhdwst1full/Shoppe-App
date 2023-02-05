@@ -12,7 +12,7 @@ export default function RegisterHeader() {
               </g>
             </svg>{' '}
           </Link>
-          <div className='ml-5 text-xl lg:text-2xl'>Đăng kí</div>
+          <div className='ml-5 text-xl lg:text-2xl'>Đăng Nhập</div>
         </nav>
       </div>
     </header>
