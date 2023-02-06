@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import Input from 'src/components/Input'
-import getRules from 'src/utils/rules'
+import {getRules} from 'src/utils/rules'
 
 export default function Login() {
   interface FormData {

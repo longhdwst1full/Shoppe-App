@@ -1,21 +1,22 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import Input from 'src/components/Input'
-import getRules from 'src/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { getRules, schema, Schema } from 'src/utils/rules'
 
-interface FormData {
-  email: string
-  password: string
-  confirm_password: string
-}
+type FormData = Schema
 export default function Register() {
   const {
     register,
     handleSubmit,
     getValues,
     formState: { errors }
-  } = useForm<FormData>()
+  } = useForm<FormData>({
+    resolver: yupResolver(schema)
+  })
+
   const rules = getRules(getValues)
+
   const onSubmit = handleSubmit(
     (data) => {
       console.log(data)
@@ -26,7 +27,7 @@ export default function Register() {
     }
   )
   /**
-   * watch :xem dữ liệu nhập vào của 1 trường nếu truyền name input vào còn k thì lắng nghe toàn form và nó làm re-render lại toàn form 
+   * watch :xem dữ liệu nhập vào của 1 trường nếu truyền name input vào còn k thì lắng nghe toàn form và nó làm re-render lại toàn form
    * getValues: k làm re-render lại toàn form chỉ re-render khi truyền name input cần lắng nghe cần get value so sánh
    */
   // console.log('err ', errors)
@@ -41,7 +42,6 @@ export default function Register() {
               <Input
                 name='email'
                 placeholder='Email ...'
-                rules={rules.email}
                 className='mt-8'
                 type='email'
                 register={register}
@@ -50,7 +50,6 @@ export default function Register() {
               <Input
                 name='password'
                 placeholder='Password ...'
-                rules={rules.password}
                 className='mt-2'
                 type='password'
                 autoComplete='on'
@@ -60,7 +59,6 @@ export default function Register() {
               <Input
                 name='confirm_password'
                 placeholder='Confirm Password ...'
-                rules={rules.confirm_password}
                 className='mt-2'
                 type='password'
                 autoComplete='on'
