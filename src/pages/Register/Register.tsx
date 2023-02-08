@@ -3,29 +3,34 @@ import { Link } from 'react-router-dom'
 import Input from 'src/components/Input'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { getRules, schema, Schema } from 'src/utils/rules'
+import { useMutation } from '@tanstack/react-query'
+import { registerAccount } from 'src/apis/auth.api'
+import { omit } from 'lodash'
 
 type FormData = Schema
 export default function Register() {
   const {
     register,
     handleSubmit,
-    getValues,
+
     formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   })
 
-  const rules = getRules(getValues)
+  // const rules = getRules(getValues)
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => registerAccount(body)
+  })
 
-  const onSubmit = handleSubmit(
-    (data) => {
-      console.log(data)
-    },
-    (data) => {
-      const password = getValues('password')
-      console.log(password)
-    }
-  )
+  const onSubmit = handleSubmit((data) => {
+    const body = omit(data, ['confirm_password'])
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log(data)
+      }
+    })
+  })
   /**
    * watch :xem dữ liệu nhập vào của 1 trường nếu truyền name input vào còn k thì lắng nghe toàn form và nó làm re-render lại toàn form
    * getValues: k làm re-render lại toàn form chỉ re-render khi truyền name input cần lắng nghe cần get value so sánh
