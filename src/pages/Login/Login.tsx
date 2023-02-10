@@ -1,23 +1,55 @@
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { login } from 'src/apis/auth.api'
 import Input from 'src/components/Input'
-import {getRules} from 'src/utils/rules'
+import { ResponseApi } from 'src/types/utils.type'
+import { schema, Schema } from 'src/utils/rules'
+import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
+
+type FormData = Omit<Schema, 'confirm_password'>
+const loginSchema = schema.omit(['confirm_password'])
 
 export default function Login() {
-  interface FormData {
-    email: string
-    password: string
-    confirm_password: string
-  }
+ 
   const {
+    setError,
     register,
     handleSubmit,
-    getValues,
     formState: { errors }
-  } = useForm<FormData>()
-  const rules = getRules()
+  } = useForm<FormData>({
+    resolver: yupResolver(loginSchema)
+  })
+
+  // const rules = getRules(getValues)
+  const loginMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => login(body)
+  })
+
   const onSubmit = handleSubmit((data) => {
     // console.log(data))
+    loginMutation.mutate(data, {
+      onSuccess: (data) => {
+        console.log(data)
+      },
+      onError: (error) => {
+        console.log(error)
+        if (isAxiosUnprocessableEntityError<ResponseApi<FormData>>(error)) {
+          const formError = error.response?.data.data
+          // check kiểm tra lỗi
+
+          if (formError) {
+            Object.keys(formError).forEach((key) => {
+              setError(key as keyof FormData, {
+                message: formError[key as keyof FormData],
+                type: 'Sever'
+              })
+            })
+          }
+        }
+      }
+    })
   })
   // console.log('err ', errors)
   return (
@@ -25,7 +57,7 @@ export default function Login() {
       <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit}>
+            <form className='p-10 rounded bg-white shadow-sm' onSubmit={onSubmit} noValidate>
               <div className='text-2xl'>Đăng nhập</div>
               <Input
                 placeholder='Email'
@@ -34,17 +66,15 @@ export default function Login() {
                 register={register}
                 errorMessage={errors.email?.message}
                 name='email'
-                rules={rules.email}
               />
               <Input
+                name='password'
                 placeholder='Password'
-                type='password'
                 className='mt-2'
+                type='password'
+                autoComplete='on'
                 register={register}
                 errorMessage={errors.password?.message}
-                name='password'
-                autoComplete='on'
-                rules={rules.password}
               />
 
               <div className='mt-2'>
