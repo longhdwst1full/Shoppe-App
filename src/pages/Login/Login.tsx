@@ -12,7 +12,6 @@ type FormData = Omit<Schema, 'confirm_password'>
 const loginSchema = schema.omit(['confirm_password'])
 
 export default function Login() {
- 
   const {
     setError,
     register,
