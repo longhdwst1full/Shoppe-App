@@ -1,10 +1,14 @@
 import axios, { AxiosError, type AxiosInstance } from 'axios'
 import { toast } from 'react-toastify'
 import HttpStatusCode from 'src/constants/httpStatusCode.enum'
+import { AuthResponse } from 'src/types/auth.type'
+import { clearAccessTokenFromLS, getAccessTokenFromLS, saveAccesTokenToLS } from './auth'
 
 class Http {
   instance: AxiosInstance
+  private accessToken: string
   constructor() {
+    this.accessToken = getAccessTokenFromLS()
     this.instance = axios.create({
       baseURL: 'https://api-ecom.duthanhduoc.com',
       timeout: 10000,
@@ -13,8 +17,30 @@ class Http {
       }
     })
     // Thêm một bộ đón chặn response
+    this.instance.interceptors.request.use(
+      (config) => {
+        if (this.accessToken && config.headers) {
+          config.headers.authorization = this.accessToken
+
+          return config
+        }
+        return config
+      },
+      (errors) => {
+        return Promise.reject(errors)
+      }
+    )
+
     this.instance.interceptors.response.use(
-      function (response) {
+      (response) => {
+        const { url } = response.config
+        if (url === '/login' || url === '/register') {
+          this.accessToken = (response.data as AuthResponse).data.access_token
+          saveAccesTokenToLS(this.accessToken)
+        } else if (url === '/logout') {
+          this.accessToken = ''
+          clearAccessTokenFromLS()
+        }
         // Bất kì mã trạng thái nào nằm trong tầm 2xx đều khiến hàm này được trigger
         // Làm gì đó với dữ liệu response
         return response

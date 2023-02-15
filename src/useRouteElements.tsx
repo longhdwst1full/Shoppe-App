@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
+import { AppContext } from './contexts/app.context'
 import MainLayout from './layouts/MainLayout'
 import RegisterLayout from './layouts/RegisterLayout'
 import Login from './pages/Login'
@@ -6,14 +8,16 @@ import ProductList from './pages/ProductList'
 import Profile from './pages/Profile'
 import Register from './pages/Register'
 
-const isAuthenticated = false
 function ProtectedRoute() {
+  const { isAuthenticated } = useContext(AppContext)
   /**
    * nếu đã đăng nhập thì tiếp tục vào còn k chuyển về login
    */
   return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
 }
 function RejectedRoute() {
+  const { isAuthenticated } = useContext(AppContext)
+
   /**
    * nếu đã đăng nhập thì không cho quay lại trang login
    */
@@ -27,7 +31,7 @@ export default function useRouteElements() {
       element: <RejectedRoute />,
       children: [
         {
-          path: '/login',
+          path: 'login',
           element: (
             <RegisterLayout>
               <Login />
@@ -35,7 +39,7 @@ export default function useRouteElements() {
           )
         },
         {
-          path: '/register',
+          path: 'register',
           element: (
             <RegisterLayout>
               <Register />
@@ -49,7 +53,7 @@ export default function useRouteElements() {
       element: <ProtectedRoute />,
       children: [
         {
-          path: '/profile',
+          path: 'profile',
           element: (
             <MainLayout>
               <Profile />
