@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login } from 'src/apis/auth.api'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
+import path from 'src/constants/path'
 import { AppContext } from 'src/contexts/app.context'
 import { ErrorReponse } from 'src/types/utils.type'
 import { schema, Schema } from 'src/utils/rules'
@@ -15,7 +16,7 @@ type FormData = Omit<Schema, 'confirm_password'>
 const loginSchema = schema.omit(['confirm_password'])
 
 export default function Login() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
   const {
     setError,
@@ -32,9 +33,10 @@ export default function Login() {
   })
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data)
+    // console.log(data)
     loginMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        setProfile(data.data.data.user)
         // console.log(data)
         setIsAuthenticated(true)
         navigate('/')
@@ -95,7 +97,7 @@ export default function Login() {
               </div>
               <div className='flex items-center justify-center mt-8'>
                 <span className='text-gray-400'>Bạn chưa có tài khoản?</span>
-                <Link className='text-red-400 ml-1' to='/register'>
+                <Link className='text-red-400 ml-1' to={path.register}>
                   Đăng ký
                 </Link>
               </div>
