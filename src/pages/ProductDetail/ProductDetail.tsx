@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
-import { useEffect, useMemo, useState } from 'react'
+import { unset } from 'lodash'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/InputNumber'
@@ -14,6 +15,8 @@ export default function ProductDetail() {
     queryKey: ['product', id],
     queryFn: () => productApi.getProductDetail(id as string)
   })
+
+  const imageRef = useRef<HTMLImageElement>(null)
 
   // slider
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
@@ -43,17 +46,43 @@ export default function ProductDetail() {
     if (currentIndexImages[1] < (product as Product).images.length) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
     }
-    // console.log((product as Product).images.length)
   }
 
   const prev = () => {
     // console.log(currentIndexImages[1])
     if (currentIndexImages[0] > 0) {
-      setCurrentIndexImages((prev) => {
-        // console.log(prev)
-        return [prev[0] - 1, prev[1] - 1]
-      })
+      setCurrentIndexImages((prev) => [prev[0] - 1, prev[1] - 1])
     }
+  }
+
+  // hover zoom ảnh
+  const handleZoom = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const image = imageRef.current as HTMLImageElement
+    const { naturalHeight, naturalWidth } = image
+
+    // cách 1 lấy offsetX và ôffsetY đơn giản khi chúng ta đã xử lý đc bubble event
+    // nếu dùng cách 1 thì chỗ absolute thêm : "pointer-events-none"
+    // const { offsetX, offsetY } = e.nativeEvent
+
+    // cách 2: xử lý bất chấp bubble event, khi chúng ta không xử ly đc bubble event
+    const offsetX = e.pageX - (rect.x + window.scrollX)
+    const offsetY = e.pageY - (rect.y + window.scrollX)
+
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    const left = offsetX * (1 - naturalWidth / rect.width)
+
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.top = top + 'px'
+    image.style.left = left + 'px'
+
+    // even bubble
+  }
+
+  const handleRemoveZoom = () => {
+    imageRef.current?.removeAttribute('style')
   }
 
   if (!product) return null
@@ -63,11 +92,16 @@ export default function ProductDetail() {
         <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
-              <div className='relative w-full pt-[100%] shadow'>
+              <div
+                className='relative w-full cursor-zoom-in overflow-hidden pt-[100%] shadow'
+                onMouseMove={handleZoom}
+                onMouseLeave={handleRemoveZoom}
+              >
                 <img
                   src={activeImage}
                   alt={product.name}
-                  className='absolute top-0 left-0 h-full w-full bg-white object-cover'
+                  className='pointer-events-none absolute top-0 left-0 h-full w-full bg-white object-cover'
+                  ref={imageRef}
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
@@ -93,7 +127,7 @@ export default function ProductDetail() {
                       <img
                         src={img}
                         alt={product.name}
-                        className='absolute top-0 left-0 h-full w-full cursor-pointer bg-white object-cover'
+                        className='pointer-events-none absolute top-0 left-0 h-full w-full cursor-pointer bg-white object-cover'
                       />
                       {isActive && <div className='absolute inset-0 border-2 border-orange' />}
                     </div>
