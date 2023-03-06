@@ -31,8 +31,6 @@ export default function Cart() {
     }
   })
 
-
-
   const buyProductsMutation = useMutation({
     mutationFn: purchaseApi.buyProducts,
     onSuccess: (data) => {
@@ -44,8 +42,6 @@ export default function Cart() {
     }
   })
 
-
-
   const deletePurchasesMutation = useMutation({
     mutationFn: purchaseApi.deletePurchase,
     onSuccess: () => {
@@ -56,14 +52,12 @@ export default function Cart() {
   const purchasesInCart = purchasesInCartData?.data.data
   const isAllChecked = extendedPurchases.every((purchase) => purchase.checked)
 
-
   const checkedPurchases = extendedPurchases.filter((purchase) => purchase.checked)
   const checkedPurchasesCount = checkedPurchases.length
   const totalCheckedPurchasePrice = checkedPurchases.reduce((result, current) => {
     return result + current.product.price * current.buy_count
   }, 0)
 
-  
   const totalCheckedPurchaseSavingPrice = checkedPurchases.reduce((result, current) => {
     return result + (current.product.price_before_discount - current.product.price) * current.buy_count
   }, 0)
@@ -200,7 +194,7 @@ export default function Cart() {
                                   name: purchase.product.name,
                                   id: purchase.product._id
                                 })}`}
-                                className='line-clamp-2'
+                                className='text-left line-clamp-2'
                               >
                                 {purchase.product.name}
                               </Link>
