@@ -66,6 +66,7 @@ function testPriceMinMax(this: yup.TestContext<AnyObject>) {
   return price_min !== '' || price_max !== ''
 }
 
+// change type Schema  password
 const handleConfirmPasswordYup = (refString: string) => {
   return yup
     .string()
@@ -74,6 +75,7 @@ const handleConfirmPasswordYup = (refString: string) => {
     .max(160, 'Độ dài từ 6 - 160 ký tự')
     .oneOf([yup.ref(refString)], 'Nhập lại password không khớp')
 }
+// end
 
 export const schema = yup.object({
   email: yup
