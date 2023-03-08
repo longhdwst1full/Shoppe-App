@@ -16,12 +16,11 @@ import { getAvatarUrl, isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import DateSelect from '../../components/DateSelect'
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
-
-const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
-
 type FormDataError = Omit<FormData, 'date_of_birth'> & {
   date_of_birth?: string
 }
+
+const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
 
 function Info() {
   const {
@@ -76,20 +75,20 @@ function Info() {
 
 export default function Profile() {
   const { setProfile } = useContext(AppContext)
-
-  const { data: profileData, refetch } = useQuery({
-    queryKey: ['profile'],
-    queryFn: userApi.getProfile
-  })
   const [file, setFile] = useState<File>()
-  const profile = profileData?.data.data
-  const updateProfileMutation = useMutation(userApi.updateProfile)
 
   const previewImage = useMemo(() => {
     return file ? URL.createObjectURL(file) : ''
   }, [file])
 
-  const method = useForm<FormData>({
+  const { data: profileData, refetch } = useQuery({
+    queryKey: ['profile'],
+    queryFn: userApi.getProfile
+  })
+  const profile = profileData?.data.data
+  const updateProfileMutation = useMutation(userApi.updateProfile)
+  const uploadAvatarMutaion = useMutation(userApi.uploadAvatar)
+  const methods = useForm<FormData>({
     defaultValues: {
       name: '',
       phone: '',
@@ -107,9 +106,7 @@ export default function Profile() {
     setValue,
     watch,
     setError
-  } = method
-
-  const uploadAvatarMutaion = useMutation(userApi.uploadAvatar)
+  } = methods
 
   const avatar = watch('avatar')
 
@@ -133,7 +130,7 @@ export default function Profile() {
         avatarName = uploadRes.data.data
         setValue('avatar', avatarName)
       }
-      console.log(data)
+
       const res = await updateProfileMutation.mutateAsync({
         ...data,
         date_of_birth: data.date_of_birth?.toISOString(),
@@ -161,13 +158,14 @@ export default function Profile() {
   const handleChangeFile = (file?: File) => {
     setFile(file)
   }
+
   return (
     <div className='rounded-sm bg-white px-2 pb-10 shadow md:px-7 md:pb-20'>
       <div className='border-b border-b-gray-200 py-6'>
         <h1 className='text-lg font-medium capitalize text-gray-900'>Hồ Sơ Của Tôi</h1>
         <div className='mt-1 text-sm text-gray-700'>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
       </div>
-      <FormProvider {...method}>
+      <FormProvider {...methods}>
         <form className='mt-8 flex flex-col-reverse md:flex-row md:items-start' onSubmit={onSubmit}>
           <div className='mt-6 flex-grow md:mt-0 md:pr-12'>
             <div className='flex flex-col flex-wrap sm:flex-row'>
