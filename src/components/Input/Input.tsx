@@ -5,24 +5,26 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string
   classNameInput?: string
   classNameError?: string
-  register?: UseFormRegister<any>
   classNameEye?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register?: UseFormRegister<any>
   rules?: RegisterOptions
 }
+
+
 export default function Input({
+  errorMessage,
   className,
-  rules,
   name,
   register,
-  errorMessage,
+  rules,
   classNameInput = 'p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm',
   classNameError = 'mt-1 text-red-600 min-h-[1.25rem] text-sm',
   classNameEye = 'absolute top-[8px] right-[5px] h-5 w-5 cursor-pointer',
   ...rest
 }: Props) {
-  const registerResult = register && name ? register(name, rules) : null
-
   const [openEye, setOpenEye] = useState(false)
+  const registerResult = register && name ? register(name, rules) : null
 
   const toggleEye = () => {
     setOpenEye((prev) => !prev)
@@ -38,7 +40,7 @@ export default function Input({
   return (
     <div className={'relative ' + className}>
       <input className={classNameInput} {...registerResult} {...rest} type={handleType()} />
-      {rest.type === 'password' && openEye ? (
+      {rest.type === 'password' && openEye && (
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'
@@ -55,7 +57,8 @@ export default function Input({
           />
           <path strokeLinecap='round' strokeLinejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' />
         </svg>
-      ) : (
+      )}
+      {rest.type === 'password' && !openEye && (
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'
