@@ -1,4 +1,4 @@
- enum HttpStatusCode {
+enum HttpStatusCode {
   Continue = 100,
   SwitchingProtocols = 101,
   Processing = 102,
@@ -61,6 +61,6 @@
   InsufficientStorage = 507,
   LoopDetected = 508,
   NotExtended = 510,
-  NetworkAuthenticationRequired = 511,
+  NetworkAuthenticationRequired = 511
 }
 export default HttpStatusCode
