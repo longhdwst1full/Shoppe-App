@@ -18,7 +18,7 @@ import { AppContext } from 'src/contexts/app.context'
 import { useContext } from 'react'
 import Button from 'src/components/Button'
 import path from 'src/constants/path'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 type FormData = Pick<Schema, 'email' | 'password' | 'confirm_password'>
 const registerSchema = schema.pick(['email', 'password', 'confirm_password'])

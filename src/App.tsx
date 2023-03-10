@@ -1,9 +1,12 @@
 import useRouteElements from './useRouteElements'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { useContext, useEffect } from 'react'
-import { AppContext } from './contexts/app.context'
+import { useEffect, useContext } from 'react'
 import { LocalStorageEventTarget } from './utils/auth'
+import { AppContext } from './contexts/app.context'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import ErrorBoundary from './components/ErrorBoundary'
+import { HelmetProvider } from 'react-helmet-async'
 
 function App() {
   const routeElements = useRouteElements()
@@ -15,11 +18,15 @@ function App() {
       LocalStorageEventTarget.removeEventListener('clearLS', reset)
     }
   }, [reset])
+
   return (
-    <div>
-      {routeElements}
-      <ToastContainer />
-    </div>
+    <HelmetProvider>
+      <ErrorBoundary>
+        {routeElements}
+        <ToastContainer />
+      </ErrorBoundary>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </HelmetProvider>
   )
 }
 

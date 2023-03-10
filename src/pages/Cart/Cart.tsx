@@ -13,7 +13,7 @@ import keyBy from 'lodash/keyBy'
 import { toast } from 'react-toastify'
 import { AppContext } from 'src/contexts/app.context'
 import noproduct from 'src/assets/images/no-product.png'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 
 // biến dùng useMemmo
 // function dùng useCallback
@@ -50,7 +50,6 @@ export default function Cart() {
   })
 
   const location = useLocation()
- 
 
   const choosenPurchaseIdFromLocation = (location.state as { purchaseId: string } | null)?.purchaseId
 

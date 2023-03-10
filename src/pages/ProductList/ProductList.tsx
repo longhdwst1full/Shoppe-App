@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Helmet } from 'react-helmet'
+import { Helmet } from 'react-helmet-async'
 import categoryApi from 'src/apis/category.api'
 import productApi from 'src/apis/product.api'
 import Pagination from 'src/components/Pagination'
