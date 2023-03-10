@@ -9,8 +9,6 @@ interface Props {
   product: ProductTypes
 }
 export default function Product({ product }: Props) {
-  // console.log(queryParam)
-
   return (
     <Link to={`${path.home}${generateNameId({ name: product.name, id: product._id })}`}>
       <div className='overflow-hidden rounded-sm bg-white shadow transition-transform duration-100 hover:translate-y-[-0.04rem] hover:shadow-md'>

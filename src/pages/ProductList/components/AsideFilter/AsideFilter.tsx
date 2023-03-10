@@ -28,7 +28,7 @@ type FormData = NoUndefinedField<Pick<Schema, 'price_max' | 'price_min'>>
 const priceSchema = schema.pick(['price_min', 'price_max'])
 
 export default function AsideFilter({ queryConfig, categories }: Props) {
-  const {t}=useTranslation('home')
+  const { t } = useTranslation('home')
   const { category } = queryConfig
   const {
     control,

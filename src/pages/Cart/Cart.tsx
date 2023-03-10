@@ -13,6 +13,7 @@ import keyBy from 'lodash/keyBy'
 import { toast } from 'react-toastify'
 import { AppContext } from 'src/contexts/app.context'
 import noproduct from 'src/assets/images/no-product.png'
+import { Helmet } from 'react-helmet'
 
 // biến dùng useMemmo
 // function dùng useCallback
@@ -49,7 +50,7 @@ export default function Cart() {
   })
 
   const location = useLocation()
-  // console.log(location)
+ 
 
   const choosenPurchaseIdFromLocation = (location.state as { purchaseId: string } | null)?.purchaseId
 
@@ -155,6 +156,10 @@ export default function Cart() {
 
   return (
     <div className='bg-neutral-100 py-16'>
+      <Helmet>
+        <title>Giỏ hàng của bạn | Shopee Clone</title>
+        <meta name='description' content='Sản phẩm có trong giỏ hàng' />
+      </Helmet>
       <div className='container'>
         {extendedPurchases.length > 0 ? (
           <>

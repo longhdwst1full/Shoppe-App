@@ -89,7 +89,7 @@ export class Http {
         // Nếu là lỗi 401
         if (isAxiosUnauthorizedError<ErrorReponse<{ name: string; message: string }>>(error)) {
           const config = error.response?.config || ({ headers: {} } as InternalAxiosRequestConfig)
-          console.log(config)
+
           const { url } = config
           // Trường hợp Token hết hạn và request đó không phải là của request refresh token
           // thì chúng ta mới tiến hành gọi refresh token
