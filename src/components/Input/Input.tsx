@@ -11,7 +11,6 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   rules?: RegisterOptions
 }
 
-
 export default function Input({
   errorMessage,
   className,
